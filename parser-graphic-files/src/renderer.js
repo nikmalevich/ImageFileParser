@@ -1,26 +1,23 @@
-let fs = require('fs');
+const fs = require('fs');
 
-function readFiles() {
-	let folder = document.getElementById('folder').value;
+function readFiles(event) {
+  let filesHtml = '';
+  const pixelSizesRegex = /\d+х\d+х\d+/;
 
-	fs.readdir(folder, (err, files) => {
-		var filesHtml = '';
-		let pixelSizesRegex = /\d+х\d+х\d+/;
+    Array.from(event.target.files).forEach(file => {
+      const filename = file.name;
+    const fileSize = parseInt(fs.statSync(file.path).size);
 
-  		files.forEach(file => {
-  			let fileSize = parseInt(fs.statSync(folder + '/' + file).size);
+      const pixelSizesStr = filename.match(pixelSizesRegex)[0];
+      const pixelSizes = pixelSizesStr.split('х');
 
-  			let pixelSizesStr = file.match(pixelSizesRegex)[0];
-  			let pixelSizes = pixelSizesStr.split('х');
+      const pixelSize = pixelSizes[0] + 'х' + pixelSizes[1];
+      const permission = pixelSizes[2];
+      const colorDepth = Math.round(8 * fileSize / parseInt(pixelSizes[0]) / parseInt(pixelSizes[1]));
+      const compression = filename.replace(pixelSizesStr, '').split('.')[0];
+        
+      filesHtml += `<p>${filename}: size - ${pixelSize}; permission - ${permission}; depth - ${colorDepth}; compression - ${compression}</p>`;
+    });
 
-  			let pixelSize = pixelSizes[0] + 'х' + pixelSizes[1];
-  			let permission = pixelSizes[2];
-  			let colorDepth = Math.round(8 * fileSize / parseInt(pixelSizes[0]) / parseInt(pixelSizes[1]));
-  			let compression = file.replace(pixelSizesStr, '').split('.')[0];
-    		
-    		filesHtml += `<p>${file}: size - ${pixelSize}; permission - ${permission}; depth - ${colorDepth}; compression - ${compression}</p>`;
-  		});
-
-  		document.getElementById('files').innerHTML = filesHtml;
-	});
+    document.getElementById('files').innerHTML = filesHtml;
 }

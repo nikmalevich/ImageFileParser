@@ -5,9 +5,7 @@
     <title></title>
   </head>
   <body>
-  	<p>Input all path to folder with image's files</p>
-  	<input type='text' id='folder'>
-    <input value='Read files' onclick='readFiles()' type='button'>
+    <input onchange='readFiles(event)' type='file' multiple>
     <div id='files'></div>
     <script src='renderer.js'></script>
   </body>
